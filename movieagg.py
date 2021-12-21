@@ -16,6 +16,7 @@ def get_genres():
     return genres
 
 def get_movies(genre):
+    print("Pulling" + genre)
     r = requests.get("https://www.imdb.com/search/title/?genres="+genre+"&explore=title_type,genres&view=simple")
     
     soup = BeautifulSoup(r.text,features="lxml")
@@ -29,7 +30,8 @@ def get_movies(genre):
 
 if __name__ == "__main__":
     genres = get_genres()
-    engine = create_engine('postgresql://chrisv:NWO@0.0.0.0:5432/movies')
+    engine = create_engine('postgresql://chrisv:NWO@{}:5432/movies'.format('postgres_db'))
+    # engine = create_engine('postgresql://chrisv:NWO@0.0.0.0:5432/movies')
 
     top=[]
     for genre in genres:
@@ -38,11 +40,11 @@ if __name__ == "__main__":
             top.append({"genre":genre,"movie":movie,"rank":index})
     
     df = pd.DataFrame(top)
-    df.to_sql('movies_fix', engine,index=false)
+    df.to_sql('movie_ranking', engine,index=false,if_exists="append")
     print("Written to DB")
 
     print("Retrieving from DB")
-    print(pd.read_sql_table('movies',con=engine))
+    print(pd.read_sql_table('movie_ranking',con=engine))
 
 
     
