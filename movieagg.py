@@ -16,7 +16,7 @@ def get_genres():
     return genres
 
 def get_movies(genre):
-    print("Pulling" + genre)
+    print("Pulling " + genre)
     r = requests.get("https://www.imdb.com/search/title/?genres="+genre+"&explore=title_type,genres&view=simple")
     
     soup = BeautifulSoup(r.text,features="lxml")
